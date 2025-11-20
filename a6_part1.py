@@ -26,15 +26,18 @@ def load_and_explore_data(filename):
         pandas DataFrame containing the data
     """
     # TODO: Load the CSV file using pandas
-    
+    data = pd.read_csv(filename)
     # TODO: Print the first 5 rows
-    
+    print("=== Student Scores Data ===")
+    print(f"\nFirst 5 Rows:")
+    print(data.head())
     # TODO: Print the shape of the dataset (number of rows and columns)
-    
+    print(f"\nDataset Shape: {data.shape[0]} rows, {data.shape[1]} columns")
     # TODO: Print basic statistics (mean, min, max, etc.)
-    
+    print(f"\nBasic Statistics:")
+    print(data.describe())
     # TODO: Return the dataframe
-    pass
+    return data
 
 
 def create_scatter_plot(data):
@@ -45,22 +48,23 @@ def create_scatter_plot(data):
         data: pandas DataFrame with Hours and Scores columns
     """
     # TODO: Create a figure with size (10, 6)
-    
+    plt.figure(figsize=(10,6))
     # TODO: Create a scatter plot with Hours on x-axis and Scores on y-axis
     #       Use color='purple' and alpha=0.6
-    
+    plt.scatter(data['Hours'], data['Scores'], color='purple', alpha=0.6)
     # TODO: Add x-axis label: 'Hours Studied'
-    
+    plt.xlabel('Hours Studied', fontsize=12)
     # TODO: Add y-axis label: 'Test Score'
-    
+    plt.ylabel('Test Score', fontsize=12)
     # TODO: Add title: 'Student Test Scores vs Hours Studied'
-    
+    plt.title('Student Test Scores vs Hours Studied', fontsize=14, fontweight='bold')
     # TODO: Add a grid with alpha=0.3
-    
+    plt.grid(True, alpha=0.3)
     # TODO: Save the figure as 'scatter_plot.png' with dpi=300
-    
+    plt.savefig('scatter_plot.png', dpi=300, bbox_inches='tight')
+    print("\nScatterplot saved as 'scatter_plot.png'")
     # TODO: Show the plot
-    pass
+    plt.show()
 
 
 def split_data(data):
@@ -74,15 +78,17 @@ def split_data(data):
         X_train, X_test, y_train, y_test
     """
     # TODO: Create X with the 'Hours' column (use double brackets to keep as DataFrame)
-    
+    X = data[['Hours']]
     # TODO: Create y with the 'Scores' column
-    
+    y = data['Scores']
     # TODO: Split the data using train_test_split with test_size=0.2 and random_state=42
-    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     # TODO: Print how many samples are in training and testing sets
-    
+    print(f"\n=== Data Split ===")
+    print(f"Training Set: {len(X_train)} samples")
+    print(f"Testing set: {len(X_test)} samples")
     # TODO: Return X_train, X_test, y_train, y_test
-    pass
+    return X_train, X_test, y_train, y_test
 
 
 def train_model(X_train, y_train):
@@ -97,13 +103,16 @@ def train_model(X_train, y_train):
         trained LinearRegression model
     """
     # TODO: Create a LinearRegression model
-    
+    model = LinearRegression()
     # TODO: Train the model using .fit()
-    
+    model.fit(X_train, y_train)
     # TODO: Print the coefficient (slope) and intercept
-    
+    print(f"\n=== Model Training Complete ===")
+    print(f"Slope (coefficient): {model.coef_[0]:.2f}")
+    print(f"Intercept: {model.intercept_:.2f}")
+    print(f"\nEquation: Sales = {model.coef_[0]:.2f} × Hours + {model.intercept_:.2f}")
     # TODO: Return the trained model
-    pass
+    return model
 
 
 def evaluate_model(model, X_test, y_test):
@@ -119,17 +128,23 @@ def evaluate_model(model, X_test, y_test):
         predictions array
     """
     # TODO: Make predictions using the model
-    
+    predictions = model.predict(X_test)
     # TODO: Calculate R² score using r2_score()
-    
+    r2 = r2_score(y_test, predictions)
     # TODO: Calculate Mean Squared Error using mean_squared_error()
-    
+    mse = mean_squared_error(y_test, predictions)
     # TODO: Calculate Root Mean Squared Error (square root of MSE)
-    
+    rmse = np.sqrt(mse)
     # TODO: Print all three metrics with clear labels
+    print(f"\n=== Model Performance ===")
+    print(f"R² Score: {r2:.4f}")
+    print(f"  → Interpretation: The model explains {r2*100:.2f}% of the variance in sales")
     
+    print(f"\nMean Squared Error: ${mse:.2f}")
+    print(f"Root Mean Squared Error: ${rmse:.2f}")
+    print(f"  → Interpretation: On average, predictions are off by ${rmse:.2f}")
     # TODO: Return the predictions
-    pass
+    return predictions
 
 
 def visualize_results(X_train, y_train, X_test, y_test, predictions, model):
@@ -195,16 +210,16 @@ if __name__ == "__main__":
     
     # Step 1: Load and explore the data
     # TODO: Call load_and_explore_data() with 'student_scores.csv'
-    
+    data = load_and_explore_data('student_scores.csv')
     # Step 2: Visualize the relationship
     # TODO: Call create_scatter_plot() with the data
-    
+    create_scatter_plot(data)
     # Step 3: Split the data
     # TODO: Call split_data() and store the returned values
-    
+    X_train, X_test, y_train, y_test = split_data(data)
     # Step 4: Train the model
     # TODO: Call train_model() with training data
-    
+    train_model(X_train, y_train)
     # Step 5: Evaluate the model
     # TODO: Call evaluate_model() with the model and test data
     
